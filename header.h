@@ -1,11 +1,10 @@
 #define MAXLINES 1000
-#define MAXLENGTH 254
+#define MAXLENGTH 256
 #define ROW 1000
 #define COL 1000
 #define max(a, b) (a > b ? a : b)
 
 typedef struct OperationInfo {
-    // op = 0 is nothing op = 1 is add op = 2 is change op = 3 is delete
     int op;
     int line_num_left;
     int line_num_right;
@@ -29,3 +28,4 @@ void fill_table(int table[ROW][COL], char* arr1[], char* arr2[]);
 void diff_algo(int table[ROW][COL], char* arr1[], char* arr2[], int col, int row);
 int format(DiffLinesInfo lines_arr[]);
 void default_print(DiffLinesInfo info_arr[], int arr_length, char* arr1[], char* arr2[]);
+void side_print(DiffLinesInfo info_arr[], int arr_length, char* arr1[], char* arr2[]);
