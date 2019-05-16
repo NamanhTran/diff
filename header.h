@@ -28,4 +28,4 @@ void fill_table(int table[ROW][COL], char* arr1[], char* arr2[]);
 void diff_algo(int table[ROW][COL], char* arr1[], char* arr2[], int col, int row);
 int format(DiffLinesInfo lines_arr[]);
 void default_print(DiffLinesInfo info_arr[], int arr_length, char* arr1[], char* arr2[]);
-void side_print(DiffLinesInfo info_arr[], int arr_length, char* arr1[], char* arr2[]);
+void side_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[]);
