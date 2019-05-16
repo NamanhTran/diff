@@ -196,9 +196,11 @@ int main(int argc, char* argv[])
             break;
 
         case('c'):
+        context_print(lines_info, lines2, lines1);
             break;
 
         case('u'):
+            unified_print(lines_info, lines2, lines1);
             break;
         
         case('d'):
@@ -414,7 +416,7 @@ int format(DiffLinesInfo lines_arr[])
 
             // Case for any iteratation except the first
             if (last_op != 0) {
-                printf("left range: %i - %i op: %c right range %i - %i\n", left_start, left_end, last_op, right_start, right_end);
+                //printf("left range: %i - %i op: %c right range %i - %i\n", left_start, left_end, last_op, right_start, right_end);
                 if (left_end - left_start > 0 ) {
                     //printf("%i,%i%c", left_start, left_end, last_op);
                 }
@@ -455,7 +457,7 @@ int format(DiffLinesInfo lines_arr[])
 
         // Print the last interation of the loop
         if (i == op_arr_len - 1) {
-                printf("left range: %i - %i op: %c right range %i - %i\n\n", left_start, left_end, last_op, right_start, right_end);
+                //printf("left range: %i - %i op: %c right range %i - %i\n\n", left_start, left_end, last_op, right_start, right_end);
                 if (left_end - left_start > 0) {
                     //printf("%i,%i%c", left_start, left_end, last_op);
                 }
@@ -503,6 +505,14 @@ void default_print(DiffLinesInfo info_arr[], int info_arr_length, char* arr1[], 
             printf("%i\n", temp.right_start);
         }
 
+        if (temp.right_end == -1) {
+            temp.right_end = temp.right_start;
+        }
+
+        if (temp.left_end == -1) {
+            temp.left_end = temp.left_start;
+        }
+
         // Prints out the lines from the files
         switch ((char)temp.op) {
             case 'a':   
@@ -532,26 +542,22 @@ void default_print(DiffLinesInfo info_arr[], int info_arr_length, char* arr1[], 
 
 void side_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[]) 
 {
-    int longest_length = max(length1, length2);
-    printf("ll:%i\n", longest_length);
     //char* longest_file = malloc()
+    int longest_length = max(length1, length2);
     int counter = 0;
     int first_run = 1;
     DiffLinesInfo temp = info_arr[counter];
     for (int i = 0; i < longest_length - 1; i++) {
         //printf("i before: %i %i %i\n", i, temp.left_start, temp.right_start);
-        if (i == length2 - 1) {
-            if (!suppress_flag) {
-                if (left_flag)
-                    printf("%-32s%c\n", arr1[i], '(');
-                
-                else
-                    printf("%-34s%s\n", arr1[i], arr1[i]);
-            }
-        }
-
         // Get the 
-        if ((i + 1 == temp.left_start && (temp.left_end != -1 || temp.right_end != -1)) || first_run == 1) {
+        if (i + 1 == temp.left_start || first_run == 1) {
+            if (temp.right_end == -1) {
+            temp.right_end = temp.right_start;
+            }
+
+            if (temp.left_end == -1) {
+                temp.left_end = temp.left_start;
+            }
 
             // Prints out the lines from the files
             int holder1 = temp.right_start;
@@ -560,7 +566,7 @@ void side_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[])
                         for (int j = temp.right_start; j <= temp.right_end; j++) {
                             printf("\t\t\t\t> %s\n", arr2[j - 1]);
                         }
-                        i--;
+                        //i--;
                         break;
                 case 'd':   
                         for (int j = temp.left_start; j <= temp.left_end; j++) {
@@ -584,13 +590,119 @@ void side_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[])
         }
 
         else {
-            if (!suppress_flag && i < length2 - 1) {
+            if (!suppress_flag && i < length2) {
                 if (left_flag)
                     printf("%-32s%c\n", arr1[i], '(');
                 
                 else
                     printf("%-34s%s\n", arr1[i], arr1[i]);
             }
+        }
+    }
+}
+
+void unified_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[]) 
+{
+    int longest_length = max(length1, length2);
+    int counter = 0;
+    DiffLinesInfo temp = info_arr[counter];
+    int first_run = 1;
+
+    for (int i = 0; i < longest_length - 1; i++) {
+        if (i + 1 == temp.left_start || first_run == 1) {
+            if (temp.right_end == -1) {
+            temp.right_end = temp.right_start;
+            }
+
+            if (temp.left_end == -1) {
+                temp.left_end = temp.left_start;
+            }
+
+            // Prints out the lines from the files
+            int holder1 = temp.right_start;
+            switch ((char)temp.op) {
+                case 'a':   
+                        for (int j = temp.right_start; j <= temp.right_end; j++) {
+                            printf("+ %s\n", arr2[j - 1]);
+                        }
+                        i--;
+                        break;
+                case 'd':   
+                        for (int j = temp.left_start; j <= temp.left_end; j++) {
+                            printf("- %s\n", arr1[j - 1]);
+                            i++;
+                        }
+                        break;
+                case 'c':
+                        for (int j = temp.left_start; j <= temp.left_end; j++) {
+                            printf("- %-32s\n+ %s\n", arr1[j - 1], arr2[holder1 - 1]);
+                            holder1++;
+                            i++;
+                        }
+
+                        break;
+            }
+
+            temp = info_arr[++counter];
+            first_run = 0;
+            //printf("i after: %i\n", i);
+        }
+
+        else {
+            printf("  %s\n", arr1[i]);
+        }
+    }
+}
+
+void context_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[]) 
+{
+    int longest_length = max(length1, length2);
+    int counter = 0;
+    DiffLinesInfo temp = info_arr[counter];
+    int first_run = 1;
+
+    for (int i = 0; i < longest_length - 1; i++) {
+        if (i + 1 == temp.left_start || first_run == 1) {
+            if (temp.right_end == -1) {
+            temp.right_end = temp.right_start;
+            }
+
+            if (temp.left_end == -1) {
+                temp.left_end = temp.left_start;
+            }
+
+            // Prints out the lines from the files
+            int holder1 = temp.right_start;
+            switch ((char)temp.op) {
+                case 'a':   
+                        for (int j = temp.right_start; j <= temp.right_end; j++) {
+                            printf("+ %s\n", arr2[j - 1]);
+                        }
+                        i--;
+                        break;
+                case 'd':   
+                        for (int j = temp.left_start; j <= temp.left_end; j++) {
+                            printf("- %s\n", arr1[j - 1]);
+                            i++;
+                        }
+                        break;
+                case 'c':
+                        for (int j = temp.left_start; j <= temp.left_end; j++) {
+                            printf("! %-32s\n", arr1[j - 1]);
+                            holder1++;
+                            i++;
+                        }
+
+                        break;
+            }
+
+            temp = info_arr[++counter];
+            first_run = 0;
+            //printf("i after: %i\n", i);
+        }
+
+        else {
+            printf("  %s\n", arr1[i]);
         }
     }
 }

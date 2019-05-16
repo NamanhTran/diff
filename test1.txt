@@ -1,9 +1,9 @@
 This part of the
 document has stayed the
-same from version to
-version.  It shouldn't
+sme from version to
+version. It shouldn't
 be shown if it doesn't
-change.  Otherwise, that
+change. Otherwise, that
 would not be helping to
 compress the size of the
 changes.
@@ -15,7 +15,7 @@ near future.
 
 It is important to spell
 check this dokument. On
-the other hend, a
+the other hand, a
 misspelled word isn't
 the end of the world.
 Nothing in the rest of
@@ -23,4 +23,5 @@ this paragraph needs to
 be changed. Things can
 be added after it.
 
-Hello
+this is text that is
+not in the right text.
