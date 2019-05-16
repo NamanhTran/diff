@@ -6,7 +6,7 @@ document!
 
 This part of the
 document has stayed the
-sme from version to
+same from version to
 version. It shouldn't
 be shown if it doesn't
 change. Otherwise, that

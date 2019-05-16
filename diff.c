@@ -352,17 +352,16 @@ void diff_algo(int table[ROW][COL], char* arr1[], char* arr2[], int col, int row
     }
 
     if (brief_flag) {
-        if (is_diff)
+        if (is_diff) {
             printf("The files are different\n");
-
-        exit(0);
+            exit(0);
+        }
     }
 
     if (is_same && identical_flag) {
         printf("The files are the same\n");
-
         exit(0);
-    } 
+    }
 
     // Reverses the array to make the formatting easier
     OperationInfo tempArr[MAXLINES * 2];
@@ -515,27 +514,40 @@ void default_print(DiffLinesInfo info_arr[], int info_arr_length, char* arr1[], 
 
         // Prints out the lines from the files
         switch ((char)temp.op) {
-            case 'a':   
-                    for (int j = temp.right_start; j <= temp.right_end; j++) {
-                        printf("> %s\n", arr1[j - 1]);
-                    }
-                    break;
+            case 'a':
+                if ((!suppress_flag && i < length2) && i != 0) {
+                    printf("> %s\n", arr1[i]);
+                }
+
+                for (int j = temp.right_start; j <= temp.right_end; j++) {
+                    printf("> %s\n", arr1[j - 1]);
+                }
+
+                if ((!suppress_flag && i < length2) && i != 0) {
+                    printf("> %s\n", arr1[i]);
+                }
+
+                break;
+
             case 'd':   
-                    for (int j = temp.left_start; j <= temp.left_end; j++) {
-                        printf("< %s\n", arr2[j - 1]);
-                    }
-                    break;
+                for (int j = temp.left_start; j <= temp.left_end; j++) {
+                    printf("< %s\n", arr2[j - 1]);
+                }
+
+                break;
+
             case 'c':
-                    for (int j = temp.left_start; j <= temp.left_end; j++) {
-                        printf("< %s\n", arr2[j - 1]);
-                    }
+                for (int j = temp.left_start; j <= temp.left_end; j++) {
+                    printf("< %s\n", arr2[j - 1]);
+                }
 
-                    printf("---\n");
+                printf("---\n");
 
-                    for (int j = temp.right_start; j <= temp.right_end; j++) {
-                        printf("> %s\n", arr1[j - 1]);
-                    }
-                    break;
+                for (int j = temp.right_start; j <= temp.right_end; j++) {
+                    printf("> %s\n", arr1[j - 1]);
+                }
+
+                break;
         }
     }
 }
@@ -563,34 +575,54 @@ void side_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[])
             int holder1 = temp.right_start;
             switch ((char)temp.op) {
                 case 'a':   
-                        for (int j = temp.right_start; j <= temp.right_end; j++) {
-                            printf("\t\t\t\t> %s\n", arr2[j - 1]);
-                        }
-                        //i--;
-                        break;
-                case 'd':   
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("%-32s<\n", arr1[j - 1]);
-                            i++;
-                        }
-                        break;
-                case 'c':
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("%-32s| %s\n", arr1[j - 1], arr2[holder1 - 1]);
-                            holder1++;
-                            i++;
-                        }
+                    if ((!suppress_flag && i < length2) && i != 0) {
+                        if (left_flag)
+                            printf("%-32s%c\n", arr1[i], '(');
+                        
+                        else
+                            printf("%-34s%s\n", arr1[i], arr1[i]);
+                    }
 
-                        break;
+                    for (int j = temp.right_start; j <= temp.right_end; j++) {
+                        printf("\t\t\t\t> %s\n", arr2[j - 1]);
+                    }
+                    
+                    if ((!suppress_flag && i < length2) && i == 0) {
+                        if (left_flag)
+                            printf("%-32s%c\n", arr1[i], '(');
+                        
+                        else
+                            printf("%-34s%s\n", arr1[i], arr1[i]);
+                    }
+
+                    break;
+
+                case 'd':   
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("%-32s<\n", arr1[j - 1]);
+                        i++;
+                    }
+
+                    break;
+
+                case 'c':
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("%-32s| %s\n", arr1[j - 1], arr2[holder1 - 1]);
+                        holder1++;
+                        i++;
+                    }
+
+                    break;
             }
 
             temp = info_arr[++counter];
             first_run = 0;
+            
             //printf("i after: %i\n", i);
         }
 
         else {
-            if (!suppress_flag && i < length2) {
+            if ((!suppress_flag && i < length2)) {
                 if (left_flag)
                     printf("%-32s%c\n", arr1[i], '(');
                 
@@ -622,25 +654,44 @@ void unified_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[])
             int holder1 = temp.right_start;
             switch ((char)temp.op) {
                 case 'a':   
-                        for (int j = temp.right_start; j <= temp.right_end; j++) {
-                            printf("+ %s\n", arr2[j - 1]);
-                        }
-                        i--;
-                        break;
-                case 'd':   
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("- %s\n", arr1[j - 1]);
-                            i++;
-                        }
-                        break;
-                case 'c':
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("- %-32s\n+ %s\n", arr1[j - 1], arr2[holder1 - 1]);
-                            holder1++;
-                            i++;
-                        }
+                    if ((!suppress_flag && i < length2) && i != 0) {
+                        if (left_flag)
+                            printf("  %s\n", arr1[i]);
+                        
+                        else
+                            printf("  %s\n", arr1[i]);
+                    }
 
-                        break;
+                    for (int j = temp.right_start; j <= temp.right_end; j++) {
+                        printf("+ %s\n", arr2[j - 1]);
+                    }
+
+                    if ((!suppress_flag && i < length2) && i == 0) {
+                        if (left_flag)
+                            printf("  %s\n", arr1[i]);
+                        
+                        else
+                            printf("  %s\n", arr1[i]);
+                    }
+
+                    break;
+
+                case 'd':   
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("- %s\n", arr1[j - 1]);
+                        i++;
+                    }
+
+                    break;
+
+                case 'c':
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("- %-32s\n+ %s\n", arr1[j - 1], arr2[holder1 - 1]);
+                        holder1++;
+                        i++;
+                    }
+
+                    break;
             }
 
             temp = info_arr[++counter];
@@ -675,25 +726,40 @@ void context_print(DiffLinesInfo info_arr[], char* arr1[], char* arr2[])
             int holder1 = temp.right_start;
             switch ((char)temp.op) {
                 case 'a':   
-                        for (int j = temp.right_start; j <= temp.right_end; j++) {
-                            printf("+ %s\n", arr2[j - 1]);
-                        }
-                        i--;
-                        break;
-                case 'd':   
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("- %s\n", arr1[j - 1]);
-                            i++;
-                        }
-                        break;
-                case 'c':
-                        for (int j = temp.left_start; j <= temp.left_end; j++) {
-                            printf("! %-32s\n", arr1[j - 1]);
-                            holder1++;
-                            i++;
-                        }
+                    if ((!suppress_flag && i < length2) && i != 0) {
+                        if (left_flag)
+                            printf("  %s\n", arr1[i]);
+                        
+                        else
+                            printf("  %s\n", arr1[i]);
+                    }
+                    
+                    for (int j = temp.right_start; j <= temp.right_end; j++) {
+                        printf("+ %s\n", arr2[j - 1]);
+                    }
 
-                        break;
+                    if ((!suppress_flag && i < length2) && i == 0) {
+                        if (left_flag)
+                            printf("  %s\n", arr1[i]);
+                        
+                        else
+                            printf("  %s\n", arr1[i]);
+                    }
+                    break;
+                case 'd':   
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("- %s\n", arr1[j - 1]);
+                        i++;
+                    }
+                    break;
+                case 'c':
+                    for (int j = temp.left_start; j <= temp.left_end; j++) {
+                        printf("! %-32s\n", arr1[j - 1]);
+                        holder1++;
+                        i++;
+                    }
+
+                    break;
             }
 
             temp = info_arr[++counter];
