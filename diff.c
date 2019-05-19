@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
     //printf("first priority: %c\nversion: %i\nbrief: %i\nignore-case: %i\nidentical: %i\nside-by-side: %i\nleft-col: %i\nsuppress: %i\ncontext: %i\nunified: %i\nnum: %i\n",first_priority, version_flag, brief_flag, ignore_case_flag, identical_flag, side_flag, left_flag, suppress_flag, context_flag, unified_flag, num_val);
 
     if (version_flag) {
-        printf("diff version 0.0.0.1\nCreated by Namanh Tran\n");
+        printf("diff version 0.0.0.1\nThis program comes with NO WARRANTY, to the extent permitted by law.\nYou may redistribute copies of this program\nunder the terms of the GNU General Public License.\nCreated by Namanh Tran\n");
         return 0;
     }
 
